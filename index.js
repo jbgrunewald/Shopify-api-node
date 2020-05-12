@@ -139,7 +139,7 @@ Shopify.prototype.request = function request(uri, method, key, data, headers) {
         const retryAfter = res.headers['retry-after'] * 1000 || 0;
         const { pathname, search } = url.parse(res.headers['location']);
 
-        return delay(retryAfter).then(() => {
+        return this.delay(retryAfter).then(() => {
           const uri = { pathname, ...this.baseUrl };
 
           if (search) uri.search = search;
@@ -151,7 +151,7 @@ Shopify.prototype.request = function request(uri, method, key, data, headers) {
       const data = key ? body[key] : body || {};
 
       if (res.headers.link) {
-        const link = parseLinkHeader(res.headers.link);
+        const link = this.parseLinkHeader(res.headers.link);
 
         if (link.next) {
           Object.defineProperties(data, {
@@ -260,9 +260,9 @@ resources.registerAll(Shopify);
  * @return {Promise} Promise that resolves after `ms` milliseconds
  * @private
  */
-function delay(ms) {
+Shopify.prototype.delay = function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
-}
+};
 
 /**
  * Parses the `Link` header into an object.
@@ -271,9 +271,9 @@ function delay(ms) {
  * @return {Object} The parsed header
  * @private
  */
-function parseLinkHeader(header) {
+Shopify.prototype.parseLinkHeader = function parseLinkHeader(header) {
   return header.split(',').reduce(reducer, {});
-}
+};
 
 /**
  * The callback function for `Array.prototype.reduce()` used by
