@@ -23,6 +23,7 @@ const resources = require('./resources');
  *     pull presentment prices for products
  * @param {Boolean|Object} [options.autoLimit] Limits the request rate
  * @param {Number} [options.timeout] The request timeout
+ * @param {Function} [options.requestOverride] an override for the request function
  * @constructor
  * @public
  */
@@ -64,6 +65,10 @@ function Shopify(options) {
   if (!options.accessToken) {
     this.baseUrl.username = options.apiKey;
     this.baseUrl.password = options.password;
+  }
+
+  if (options.requestOverride) {
+    this.request = options.requestOverride;
   }
 
   if (options.autoLimit) {
